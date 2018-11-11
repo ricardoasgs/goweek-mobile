@@ -13,11 +13,13 @@ import Tweet from "../components/Tweet";
 
 import api from "../services/api";
 
+import socket from "socket.io-client";
+
 export default class Timeline extends Component {
-  static navigationOptions = {
+  static navigationOptions = ({ navigation }) => ({
     title: "Início",
     headerRight: (
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity onPress={() => navigation.navigate("New")}>
         <Icon
           style={{ marginRight: 20 }}
           name="add-circle-outline"
@@ -26,17 +28,38 @@ export default class Timeline extends Component {
         />
       </TouchableOpacity>
     )
-  };
+  });
 
   state = {
     tweets: []
   };
 
   async componentDidMount() {
+    this.subscribeToEvents();
+
     const response = await api.get("/tweets");
 
     this.setState({ tweets: response.data });
   }
+
+  subscribeToEvents = () => {
+    const io = socket("http://10.0.3.2:3003");
+
+    io.on("tweet", data => {
+      console.log(data);
+      this.setState({ ...this.state, tweets: [data, ...this.state.tweets] });
+    });
+
+    io.on("like", data => {
+      console.log(data);
+      this.setState({
+        ...this.state,
+        tweets: this.state.tweets.map(tweet =>
+          tweet._id === data._id ? data : tweet
+        )
+      });
+    });
+  };
 
   render() {
     return (

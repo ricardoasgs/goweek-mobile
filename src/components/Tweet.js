@@ -16,7 +16,7 @@ export default class Tweet extends Component {
   render() {
     const { tweet } = this.props;
     return (
-      <View styele={styles.container}>
+      <View style={styles.container}>
         <Text style={styles.author}>{tweet.author}</Text>
         <Text style={styles.content}>{tweet.content}</Text>
         <TouchableOpacity onPress={this.handleLike} style={styles.likeButton}>
@@ -30,7 +30,7 @@ export default class Tweet extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 15,
     borderBottomWidth: 1,
     borderColor: "#eee"
   },
