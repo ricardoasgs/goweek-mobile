@@ -43,15 +43,18 @@ export default class Timeline extends Component {
   }
 
   subscribeToEvents = () => {
-    const io = socket("http://10.0.3.2:3003");
+    console.log("Tentando se conectar...");
+    const io = socket("http://10.0.3.2:3003", { transports: ["websocket"] });
+
+    io.on("connect", () => {
+      console.log("Conectado!!!");
+    });
 
     io.on("tweet", data => {
-      console.log(data);
       this.setState({ ...this.state, tweets: [data, ...this.state.tweets] });
     });
 
     io.on("like", data => {
-      console.log(data);
       this.setState({
         ...this.state,
         tweets: this.state.tweets.map(tweet =>
